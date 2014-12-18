@@ -10,12 +10,40 @@
     <packaging>pom</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Logging -->
         <org.slf4j.version>1.6.1</org.slf4j.version>
         <log4j.version>1.2.16</log4j.version>
+
+        <!-- Jackson Version -->
+        <org.codehaus.jackson.version>1.9.5</org.codehaus.jackson.version>
+
+        <!-- JUnit Version -->
+        <junit.version>4.11</junit.version>
+
+        <!--Plugin versions-->
+        <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
+        <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
+        <maven.clean.plugin.version>2.5</maven.clean.plugin.version>
+        <maven.vertx.plugin.version>2.0.11-final</maven.vertx.plugin.version>
+        <maven.surefire.plugin.version>2.14</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>2.14</maven.failsafe.plugin.version>
+        <maven.surefire.report.plugin.version>2.14</maven.surefire.report.plugin.version>
+        <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
+        <maven.dependency.plugin.version>2.7</maven.dependency.plugin.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
   <modules>
     <module>cloudhopper-smpp</module>
-	<module>smpp-rest-common</module>
+    <module>smpp-rest-common</module>
+    <module>mod-vertx-smpp-rest-api</module>
   </modules>
 </project>
