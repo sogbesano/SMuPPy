@@ -16,5 +16,6 @@
 
   <modules>
     <module>cloudhopper-smpp</module>
+	<module>smpp-rest-common</module>
   </modules>
 </project>
