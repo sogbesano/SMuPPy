@@ -4,8 +4,8 @@ email: chris@krslynx.com
 description: > # this means to ignore newlines until "baseurl:"
   i love puzzles, i love code. i love problems. i love to solve. 
   i hate hubris. i hate rules. i hate it when people can't write their own tools.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://krslynx.com/smpp-rest-api" # the base hostname & protocol for your site
+baseurl: "/smpp-rest-api" # the subpath of your site, e.g. /blog/
+url: "http://krslynx.com" # the base hostname & protocol for your site
 twitter_username: krslynx
 github_username:  krslynx
 instagram_username: krslynx
