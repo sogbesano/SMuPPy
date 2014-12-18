@@ -1,0 +1,98 @@
+POST		/smpp/client/configuration							Constructs a new configuration.
+GET			/smpp/client/configuration							Lists all configurations.
+GET			/smpp/client/configuration/:cid						Shows details of configuration {cid}.
+PATCH		/smpp/client/configuration/:cid						Update details of configuration {cid}.
+DELETE		/smpp/client/configuration/:cid						Purge configuration {cid}.
+GET			/smpp/client/configuration/:cid/clone				Clone configuration {cid}.
+
+GET			/smpp/client/configuration/:cid/bind				Attempt to bind configuration {cid}.
+POST		/smpp/client/configuration/:cid/bind/:bid/submit	Submit message(s) to configuration {cid} child bind {bid}.
+GET			/smpp/client/configuration/:cid/bind/:bid/destroy	Cleanly destroy child bind {bid} from configuration {cid}.
+GET			/smpp/client/configuration/:cid/bind/:bid/log		Retrieve log statements from child bind {bid} of configuration {cid}.
+DELETE		/smpp/client/configuration/:cid/bind/:bid			Purge bind (clean close is optional) {bid} of configuration {cid}.
+
+POST		/smpp/server/configuration							Constructs a new configuration.
+GET			/smpp/server/configuration							Lists all configurations.
+GET			/smpp/server/configuration/:cid						Shows details of configuration {cid}.
+PATCH		/smpp/server/configuration/:cid						Update details of configuration {cid}.
+DELETE		/smpp/server/configuration/:cid						Purge configuration {cid}.
+GET			/smpp/server/configuration/:cid/clone				Clone configuration {cid}.
+
+GET			/smpp/server/configuration/:cid/start				Attempt to start service {cid}.
+GET			/smpp/server/configuration/:cid/stop				Attempt to stop service {cid}.
+GET			/smpp/server/configuration/:cid/status				Retrieve status of service {cid}.
+GET			/smpp/server/configuration/:cid/log					Retrieve log statements from service {cid}.
+
+package smpp;
+// this dto has no path spec
+public interface SSLConfigurationDto {
+	
+	String				keyStorePath;
+	String 				keyStorePassword;
+	String 				keyManagerPassword;
+	String 				trustStorePath;
+	String 				trustStorePassword;
+	
+}
+
+package smpp;
+// path: /smpp/client/configuration
+public interface ClientConfigurationDto {
+
+	// mandatory fields
+	String 				systemId;
+	String 				password;
+	
+	// optional fields
+	String 				addressRange;
+	String 				systemType;
+	
+	// behavioral fields
+	String 				name;
+	boolean 			ssl;
+	SSLConfigurationDto	sslConfiguration;
+	
+	// defaulted fields
+	int 				windowSize;
+	String 				bindType;
+	String 				interfaceVersion;
+	long 				bindTimeout;
+	long				windowWaitTimeout;
+	long				requestExpiryTimeout;
+	long				windowMonitorInterval;
+	long				writeTimeout;
+	boolean				countersEnabled;
+}
+
+package smpp;
+// path: /smpp/server/configuration
+public interface ServerConfigurationDto {
+
+	// mandatory fields
+	String				name;
+	int					port;
+	String				systemId;
+	
+	
+	// optional fields
+	
+	
+	// behavioral fields
+	boolean 			ssl;
+	SSLConfigurationDto	sslConfiguration;
+	
+	// defaulted fields
+	long				bindTimeout;
+	boolean				autoNegotiateInterfaceVersion;
+	String				interfaceVersion;
+	int					maxConnectionSize;
+	boolean 			nonBlockingSocketsEnabled;
+	boolean				reuseAddress;
+	boolean				jmxEnabled;
+	String				jmxDomain;
+	int					defaultWindowSize;
+	long				defaultWindowWaitTimeout;
+	long				defaultRequestExpiryTimeout;
+	long				defaultWindowMonitorInterval;
+	boolean				defaultSessionCountersEnabled;
+}

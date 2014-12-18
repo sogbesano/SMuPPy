@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>FS | SMPP REST API</title>
+    <description>i love puzzles, i love code. i love problems. i love to solve.  i hate hubris. i hate rules. i hate it when people can&#39;t write their own tools.
+</description>
+    <link>http://krslynx.com/smpp-rest-api/</link>
+    <atom:link href="http://krslynx.com/smpp-rest-api/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 18 Dec 2014 16:08:25 +0000</pubDate>
+    <lastBuildDate>Thu, 18 Dec 2014 16:08:25 +0000</lastBuildDate>
+    <generator>Jekyll v2.5.2</generator>
+    
+  </channel>
+</rss>
