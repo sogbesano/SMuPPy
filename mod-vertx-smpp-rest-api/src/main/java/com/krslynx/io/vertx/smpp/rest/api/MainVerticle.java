@@ -1,6 +1,6 @@
 package com.krslynx.io.vertx.smpp.rest.api;
 
-import com.krslynx.integration.io.vertx.smpp.rest.api.routing.RouteManager;
+import com.krslynx.io.vertx.smpp.rest.api.routing.RouteManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vertx.java.platform.Verticle;
