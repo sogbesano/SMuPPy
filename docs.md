@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Documentation
-permalink: /docs/
+permalink: /smpp-rest-api/docs/
 ---
 
 <h2>Overview</h2>
