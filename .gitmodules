@@ -1,0 +1,3 @@
+[submodule "cloudhopper-smpp"]
+	path = cloudhopper-smpp
+	url = git@github.com:krslynx/cloudhopper-smpp.git
