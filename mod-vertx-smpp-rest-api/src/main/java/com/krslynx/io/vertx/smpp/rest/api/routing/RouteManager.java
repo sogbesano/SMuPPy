@@ -1,11 +1,18 @@
 package com.krslynx.io.vertx.smpp.rest.api.routing;
 
+import com.krslynx.io.vertx.smpp.rest.api.routing.base.auth.AuthenticatedHandler;
+import com.krslynx.io.vertx.smpp.rest.api.routing.client.configuration.ClientConfigurationHandler;
+import com.krslynx.io.vertx.smpp.rest.api.routing.server.configuration.ServerConfigurationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vertx.java.core.Handler;
+import org.vertx.java.core.Vertx;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.RouteMatcher;
 
+/**
+ * @author Christopher Burke
+ */
 public class RouteManager implements Handler<HttpServerRequest> {
 
     /**
@@ -14,10 +21,14 @@ public class RouteManager implements Handler<HttpServerRequest> {
     private static Logger log = LoggerFactory.getLogger(RouteManager.class);
 
     /**
-     * The base path for all requests to this... I want to say.. servlet. ;-P
-     * (ps. I know it's not a servlet)
+     * The base path for all requests, or 'context root'
      */
     private final String BASE_PATH = "/smpp";
+
+    /**
+     * For referencing the event bus
+     */
+    private Vertx vertx;
 
     /**
      * The route matcher to handle requests with
@@ -25,24 +36,18 @@ public class RouteManager implements Handler<HttpServerRequest> {
     private RouteMatcher routeMatcher;
 
     /**
-     * Application level routing for SMPP REST API
+     * <p>Application level routing for SMuPPy</p>
      *
-     * @param routeMatcher the RouteMatcher to setup routes on
+     * @param vertx the vertx to use the routemanager from
      */
-    public RouteManager(RouteMatcher routeMatcher) {
-        this.routeMatcher = routeMatcher;
+    public RouteManager(Vertx vertx) {
+        this.routeMatcher = new RouteMatcher();
+        this.vertx = vertx;
         setupRouteMatcher(this.routeMatcher);
     }
 
     /**
-     * All Application Level Routing for SMPP REST API
-     */
-    public RouteManager() {
-        this(new RouteMatcher());
-    }
-
-    /**
-     * Something has happened, so handle it.
+     * <p>Something has happened, so handle it.</p>
      *
      * @param event the event to handle
      */
@@ -52,7 +57,7 @@ public class RouteManager implements Handler<HttpServerRequest> {
     }
 
     /**
-     * Entry point for grouping all route matching
+     * <p>Entry point for grouping all route matching</p>
      *
      * @param routeMatcher the RouteMatcher to setup routes on
      */
@@ -64,14 +69,14 @@ public class RouteManager implements Handler<HttpServerRequest> {
     }
 
     /**
-     * Setup all Routes for /client/configuration requests.
+     * <p>Setup all Routes for /client/configuration requests.</p>
      *
      * @param routeMatcher the RouteMatcher to setup routes on
      */
     private void setupClientHttpManagement(RouteMatcher routeMatcher) {
 
         String clientPath = getClientPath();
-        String configPath = getConfigPath();
+        final String configPath = getConfigPath();
         String confSuffix = getConfSuffix();
 
         String pathSpec = BASE_PATH + clientPath + configPath;
@@ -80,67 +85,31 @@ public class RouteManager implements Handler<HttpServerRequest> {
         log.info("Beginning registry of Client / SMPP Management Actions...");
 
         log.info("Registering POST - " + pathSpec);
-        routeMatcher.post(pathSpec, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.post(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
         log.info("Registered POST - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec);
-        routeMatcher.get(pathSpec, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.get(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
         log.info("Registered GET - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec + confSuffix);
-        routeMatcher.get(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.get(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
         log.info("Registered GET - " + pathSpec + confSuffix);
 
         log.info("Registering PATCH - " + pathSpec + confSuffix);
-        routeMatcher.patch(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.patch(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
         log.info("Registered PATCH - " + pathSpec + confSuffix);
 
         log.info("Registering DELETE - " + pathSpec + confSuffix);
-        routeMatcher.delete(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.delete(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
         log.info("Registered DELETE - " + pathSpec + confSuffix);
-
-        log.info("Registering GET - " + pathSpec + confSuffix + "/clone");
-        routeMatcher.get(pathSpec + confSuffix + "/clone", new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
-        log.info("Registered GET - " + pathSpec + confSuffix + "/clone");
 
         // done
         log.info("Registry of Client / SMPP Management Actions Completed!");
     }
 
-
-
     /**
-     * Setup all routes for /client/configuration/cid/* requests
+     * <p>Setup all routes for /client/configuration/cid/* requests</p>
      *
      * @param routeMatcher the RouteMatcher to setup routes on
      */
@@ -206,7 +175,7 @@ public class RouteManager implements Handler<HttpServerRequest> {
     }
 
     /**
-     * Setup routes for /server/configuration requests
+     * <p>Setup routes for /server/configuration requests</p>
      *
      * @param routeMatcher the RouteMatcher to setup routes on
      */
@@ -222,65 +191,30 @@ public class RouteManager implements Handler<HttpServerRequest> {
         log.info("Beginning registry of Server / SMPP Management Actions...");
 
         log.info("Registering POST - " + pathSpec);
-        routeMatcher.post(pathSpec, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.post(pathSpec, new AuthenticatedHandler(vertx, new ServerConfigurationHandler(vertx)));
         log.info("Registered POST - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec);
-        routeMatcher.get(pathSpec, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.get(pathSpec, new AuthenticatedHandler(vertx, new ServerConfigurationHandler(vertx)));
         log.info("Registered GET - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec + confSuffix);
-        routeMatcher.get(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.get(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ServerConfigurationHandler(vertx)));
         log.info("Registered GET - " + pathSpec + confSuffix);
 
-        log.info("Registering PATCH - " + pathSpec + confSuffix);
-        routeMatcher.patch(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        log.info("Registering PATCH - " + pathSpec + new AuthenticatedHandler(vertx, new ServerConfigurationHandler(vertx)));
         log.info("Registered PATCH - " + pathSpec + confSuffix);
 
         log.info("Registering DELETE - " + pathSpec + confSuffix);
-        routeMatcher.delete(pathSpec + confSuffix, new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
+        routeMatcher.delete(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ServerConfigurationHandler(vertx)));
         log.info("Registered DELETE - " + pathSpec + confSuffix);
-
-        log.info("Registering GET - " + pathSpec + confSuffix + "/clone");
-        routeMatcher.get(pathSpec + confSuffix + "/clone", new Handler<HttpServerRequest>() {
-            @Override
-            public void handle(HttpServerRequest event) {
-                event.response().end(event.method() + " " + event.path() + " not yet implemented.");
-            }
-        });
-        log.info("Registered GET - " + pathSpec + confSuffix + "/clone");
 
         // done
         log.info("Registry of Server / SMPP Management Actions Completed!");
     }
 
     /**
-     * Setup requests for /server/configuration/* requests
+     * <p>Setup requests for /server/configuration/* requests</p>
      *
      * @param routeMatcher the RouteMatcher to setup routes on
      */
