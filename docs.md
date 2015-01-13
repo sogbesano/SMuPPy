@@ -5,13 +5,14 @@ permalink: /docs/
 ---
 
 <h2>Overview</h2>
-<p>This document is short, sweet and to the point. If you've used a RESTFul API before, you're probably familiar with the below structure.</p>
 
 <h3>Client</h3>
 
 ---
 <h4>Client / SMPP Management</h4>
 <p>Allows for SMPP client configurations to be constructed on the server, subsequently allowing for the server to bind to specified interfaces, and submit short messages.</p>
+
+***Please refer to the ClientConfiguration model.***
 
 <ol class="rest-ov">
 	<li>
@@ -42,12 +43,6 @@ permalink: /docs/
 		<span class="rest-ov-m-delete">DELETE</span>
 		<span class="rest-ov-path">/smpp/client/configuration/:cid</span>
 		<span class="rest-ov-brief">Purge configuration {cid}.</span>
-	</li>
-
-	<li>
-		<span class="rest-ov-m-get">GET</span>
-		<span class="rest-ov-path">/smpp/client/configuration/:cid/clone</span>
-		<span class="rest-ov-brief">Clone configuration {cid}.</span>
 	</li>
 </ol>
 
@@ -93,6 +88,8 @@ permalink: /docs/
 <h4>Server / SMPP Management</h4>
 <p>Allows for SMPP server sessions to be created on the server, subsequently allowing for the server to launch SMPP interfaces.</p>
 
+***Please refer to the ServerConfiguration model.***
+
 <ol class="rest-ov">
 	<li>
 		<span class="rest-ov-m-post">POST</span>
@@ -122,12 +119,6 @@ permalink: /docs/
 		<span class="rest-ov-m-delete">DELETE</span>
 		<span class="rest-ov-path">/smpp/server/configuration/:cid</span>
 		<span class="rest-ov-brief">Purge configuration {cid}.</span>
-	</li>
-	
-	<li>
-		<span class="rest-ov-m-get">GET</span>
-		<span class="rest-ov-path">/smpp/server/configuration/:cid/clone</span>
-		<span class="rest-ov-brief">Clone configuration {cid}.</span>
 	</li>
 </ol>
 
@@ -161,7 +152,6 @@ permalink: /docs/
 	</li>
 </ol>
 
-
 <ul class="rest-ov">
 	<li>
 		<span class="rest-ov-m-post">POST</span> Methods always return an entity identifier.
@@ -183,16 +173,14 @@ permalink: /docs/
 <h3>Design</h3>
 ---
 
-I use <a href="http://httpstatus.es">this website</a> to select pragmatic HTTP Status Codes. To keep things extra simple, here's application-level explinations of HTTP Status Codes you will see: 
-
-<h4>Success</h4>
+<h4>Success HTTP Status Codes</h4>
 
 * `200 OK` - Everything was fine.
 * `201 OK` - An entity has been constructed, check the body for the identifier.
 * `202 Accepted` - The server has accepted your request. It will be processed in due course.
 * `204 No Content` - The server has accepted your request, but there was no content (empty body).
 
-<h4>Client Error</h4>
+<h4>Client Error HTTP Status Codes</h4>
 
 * `400 Bad Syntax` - Something was wrong in the request body.
 * `401 Authentication` - You need to authenticate the request (i.e. include an authentication header).
@@ -202,7 +190,7 @@ I use <a href="http://httpstatus.es">this website</a> to select pragmatic HTTP S
 * `405 Bad Method` - Method wrong for path.
 * `420 Enhance your Calm` - Rate limiting has been applied to your IP.
 
-<h4>Server Error</h4>
+<h4>Server Error HTTP Status Codes</h4>
 
 * `500 Error` - Something went wrong on the server. Consider raising a GitHub issue.
 * `503 Unavailable` - Server is unavailable (due to too many requests)
@@ -210,21 +198,12 @@ I use <a href="http://httpstatus.es">this website</a> to select pragmatic HTTP S
 <h4>Entity Identifiers</h4>
 Entity identifiers are strings which allow for entities to be looked up in the database. Entity is a base class, which application specific entities subclass, therefore you must select the correct model (Java DTOs are available) to correspond to your request. Here's a list of the DTOs that we use in this project to simplify any client design you may embark upon. 
 
-* BaseEntityDto
-* ClientConfigurationDto
-* ServerConfigurationDto
-* SSLConfigurationDto
+* ClientConfiguration
+* ServerConfiguration
 
 Additionally, here's JSON examples of the above Dtos: 
 
-* BaseEntityJSON
 * ClientConfigurationJSON
 * ServerConfigurationJSON
-* SSLConfigurationJSON
 
-To ensure you're populating the DTOs with the correct information, check the `validate` methods of each implementation:
-
-* BaseEntityPojo
-* ClientConfigurationPojo
-* ServerConfigurationPojo
-* SSLConfigurationPojo
+To ensure you're populating the DTOs with the correct information, check the `isValid` methods of each implementation.
