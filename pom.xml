@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.krslynx</groupId>
-    <artifactId>smpp-rest-api</artifactId>
+    <artifactId>smuppy</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -43,7 +43,7 @@
 
   <modules>
     <module>cloudhopper-smpp</module>
-    <module>smpp-rest-common</module>
-    <module>mod-vertx-smpp-rest-api</module>
+    <module>smuppy-common</module>
+    <module>mod-vertx-smuppy</module>
   </modules>
 </project>
