@@ -7,17 +7,47 @@ import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpClientResponse;
 import org.vertx.java.core.http.HttpServer;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
-import static org.vertx.testtools.VertxAssert.*;
+import static org.vertx.testtools.VertxAssert.assertEquals;
+import static org.vertx.testtools.VertxAssert.testComplete;
 
 public class RouteManagerTest extends TestVerticle {
 
     private final int TEST_PORT = 8082;
+    private String sessionKey;
+
+    @Test
+    public void testHttpGetSmppAuthLogin() {
+
+        final JsonObject appConfig = container.config();
+        container.deployModule("io.vertx~mod-mongo-persistor~2.1.1", appConfig.getObject("mongo-persistor"));
+
+        // allow mongo to setup
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+            @Override
+            public void handle(AsyncResult<HttpServer> event) {
+                vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/auth/login", new Handler<HttpClientResponse>() {
+                    @Override
+                    public void handle(HttpClientResponse event) {
+                        assertEquals(200, event.statusCode());
+                        testComplete();
+                    }
+                }).end();
+            }
+        });
+    }
 
     @Test
     public void testHttpPostSmppClientConfiguration() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration", new Handler<HttpClientResponse>() {
@@ -33,7 +63,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfiguration() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration", new Handler<HttpClientResponse>() {
@@ -49,7 +79,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration/1", new Handler<HttpClientResponse>() {
@@ -65,7 +95,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpPatchSmppClientConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).patch("/smpp/client/configuration/1", new Handler<HttpClientResponse>() {
@@ -81,7 +111,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpDeleteSmppClientConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).delete("/smpp/client/configuration/1", new Handler<HttpClientResponse>() {
@@ -97,7 +127,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfigurationConfSuffixClone() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration/1/clone", new Handler<HttpClientResponse>() {
@@ -113,7 +143,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfigurationConfSuffixBind() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration/1/bind", new Handler<HttpClientResponse>() {
@@ -129,7 +159,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpPostSmppClientConfigurationConfSuffixBindBindSuffixSubmit() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).post("/smpp/client/configuration/1/bind/1/submit", new Handler<HttpClientResponse>() {
@@ -145,7 +175,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfigurationConfSuffixBindBindSuffixDestroy() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration/1/bind/1/destroy", new Handler<HttpClientResponse>() {
@@ -161,7 +191,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppClientConfigurationConfSuffixLogBindBindSuffixLog() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/client/configuration/1/bind/1/log", new Handler<HttpClientResponse>() {
@@ -177,7 +207,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpDeleteSmppClientConfigurationConfSuffixBindBindSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).delete("/smpp/client/configuration/1/bind/1", new Handler<HttpClientResponse>() {
@@ -193,7 +223,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpPostSmppServerConfiguration() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration", new Handler<HttpClientResponse>() {
@@ -209,7 +239,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfiguration() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration", new Handler<HttpClientResponse>() {
@@ -225,7 +255,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1", new Handler<HttpClientResponse>() {
@@ -241,7 +271,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpPatchSmppServerConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).patch("/smpp/server/configuration/1", new Handler<HttpClientResponse>() {
@@ -257,7 +287,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpDeleteSmppServerConfigurationConfSuffix() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).delete("/smpp/server/configuration/1", new Handler<HttpClientResponse>() {
@@ -273,7 +303,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffixClone() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1/clone", new Handler<HttpClientResponse>() {
@@ -289,7 +319,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffixStart() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1/start", new Handler<HttpClientResponse>() {
@@ -305,7 +335,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffixStop() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1/stop", new Handler<HttpClientResponse>() {
@@ -321,7 +351,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffixStatus() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1/status", new Handler<HttpClientResponse>() {
@@ -337,7 +367,7 @@ public class RouteManagerTest extends TestVerticle {
 
     @Test
     public void testHttpGetSmppServerConfigurationConfSuffixLog() {
-        vertx.createHttpServer().requestHandler(new RouteManager()).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
+        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
             @Override
             public void handle(AsyncResult<HttpServer> event) {
                 vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/server/configuration/1/log", new Handler<HttpClientResponse>() {
