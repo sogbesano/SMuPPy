@@ -36,7 +36,7 @@
     }
 
     .page-link {
-        color: black;
+        color: white;
         line-height: $base-line-height;
 
         // Gaps between nav items, but not on the first one
@@ -53,6 +53,7 @@
         border: 1px solid $grey-color-light;
         border-radius: 5px;
         text-align: right;
+		color: black;
 
         .menu-icon {
             display: block;
