@@ -85,23 +85,23 @@ public class RouteManager implements Handler<HttpServerRequest> {
         log.info("Beginning registry of Client / SMPP Management Actions...");
 
         log.info("Registering POST - " + pathSpec);
-        routeMatcher.post(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.post(pathSpec, new ClientConfigurationHandler(vertx));
         log.info("Registered POST - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec);
-        routeMatcher.get(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.get(pathSpec, new ClientConfigurationHandler(vertx));
         log.info("Registered GET - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec + confSuffix);
-        routeMatcher.get(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.get(pathSpec + confSuffix, new ClientConfigurationHandler(vertx));
         log.info("Registered GET - " + pathSpec + confSuffix);
 
         log.info("Registering PATCH - " + pathSpec + confSuffix);
-        routeMatcher.patch(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.patch(pathSpec + confSuffix, new ClientConfigurationHandler(vertx));
         log.info("Registered PATCH - " + pathSpec + confSuffix);
 
         log.info("Registering DELETE - " + pathSpec + confSuffix);
-        routeMatcher.delete(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.delete(pathSpec + confSuffix, new ClientConfigurationHandler(vertx));
         log.info("Registered DELETE - " + pathSpec + confSuffix);
 
         // done
