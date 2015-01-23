@@ -35,6 +35,8 @@ public class RouteManager implements Handler<HttpServerRequest> {
      */
     private RouteMatcher routeMatcher;
 
+    private static boolean isAuthenticatedRequests = false;
+
     /**
      * <p>Application level routing for SMuPPy</p>
      *
@@ -81,27 +83,35 @@ public class RouteManager implements Handler<HttpServerRequest> {
 
         String pathSpec = BASE_PATH + clientPath + configPath;
 
+        Handler<HttpServerRequest> baseHandler = null;
+        final ClientConfigurationHandler clientConfigurationHandler = new ClientConfigurationHandler(vertx);
+        if(isAuthenticatedRequests) {
+            baseHandler = new AuthenticatedHandler(vertx, clientConfigurationHandler);
+        } else {
+            baseHandler = clientConfigurationHandler;
+        }
+
         // see: http://krslynx.com/smpp-rest-api/docs/
         log.info("Beginning registry of Client / SMPP Management Actions...");
 
         log.info("Registering POST - " + pathSpec);
-        routeMatcher.post(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.post(pathSpec, baseHandler);
         log.info("Registered POST - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec);
-        routeMatcher.get(pathSpec, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.get(pathSpec, baseHandler);
         log.info("Registered GET - " + pathSpec);
 
         log.info("Registering GET - " + pathSpec + confSuffix);
-        routeMatcher.get(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.get(pathSpec + confSuffix, baseHandler);
         log.info("Registered GET - " + pathSpec + confSuffix);
 
         log.info("Registering PATCH - " + pathSpec + confSuffix);
-        routeMatcher.patch(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.patch(pathSpec + confSuffix, baseHandler);
         log.info("Registered PATCH - " + pathSpec + confSuffix);
 
         log.info("Registering DELETE - " + pathSpec + confSuffix);
-        routeMatcher.delete(pathSpec + confSuffix, new AuthenticatedHandler(vertx, new ClientConfigurationHandler(vertx)));
+        routeMatcher.delete(pathSpec + confSuffix, baseHandler);
         log.info("Registered DELETE - " + pathSpec + confSuffix);
 
         // done

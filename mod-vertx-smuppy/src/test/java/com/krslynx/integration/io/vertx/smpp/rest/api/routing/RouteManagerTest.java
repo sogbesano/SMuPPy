@@ -7,7 +7,6 @@ import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpClientResponse;
 import org.vertx.java.core.http.HttpServer;
-import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
 import static org.vertx.testtools.VertxAssert.assertEquals;
@@ -16,34 +15,6 @@ import static org.vertx.testtools.VertxAssert.testComplete;
 public class RouteManagerTest extends TestVerticle {
 
     private final int TEST_PORT = 8082;
-    private String sessionKey;
-
-    @Test
-    public void testHttpGetSmppAuthLogin() {
-
-        final JsonObject appConfig = container.config();
-        container.deployModule("io.vertx~mod-mongo-persistor~2.1.1", appConfig.getObject("mongo-persistor"));
-
-        // allow mongo to setup
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        vertx.createHttpServer().requestHandler(new RouteManager(this.vertx)).listen(TEST_PORT, new AsyncResultHandler<HttpServer>() {
-            @Override
-            public void handle(AsyncResult<HttpServer> event) {
-                vertx.createHttpClient().setPort(TEST_PORT).get("/smpp/auth/login", new Handler<HttpClientResponse>() {
-                    @Override
-                    public void handle(HttpClientResponse event) {
-                        assertEquals(200, event.statusCode());
-                        testComplete();
-                    }
-                }).end();
-            }
-        });
-    }
 
     @Test
     public void testHttpPostSmppClientConfiguration() {

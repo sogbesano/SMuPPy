@@ -120,7 +120,11 @@ public class RestfulHandler<T extends ValidatedModel> implements Handler<HttpSer
                     if(!model.isValid()) {
                         // HTTP/1.1 400 BAD REQUEST
                         // Body: model as JSON
-                        request.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(Json.encodePrettily(model));
+                        request.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(
+                                new JsonObject(body)
+                                        .putString("validationErrors", model.getErrors().toString())
+                                        .putString("validationWarnings", model.getWarnings().toString())
+                                        .encodePrettily());
                         return;
                     }
 

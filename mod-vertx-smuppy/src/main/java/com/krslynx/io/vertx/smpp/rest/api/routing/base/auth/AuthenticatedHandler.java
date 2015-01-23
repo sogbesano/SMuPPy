@@ -217,6 +217,14 @@ public class AuthenticatedHandler implements Handler<HttpServerRequest> {
                                                     .encodePrettily());
                                 }
                             }
+                        } else {
+                            log.error("Failure to authenticate AccessKey in database.");
+                            request.response().setStatusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                                    .end(new JsonObject()
+                                            .putString(
+                                                    "error",
+                                                    "Failure to authenticate AccessKey in database.")
+                                            .encodePrettily());
                         }
                     } else {
                         log.error("Failure to authenticate AccessKey in database.");

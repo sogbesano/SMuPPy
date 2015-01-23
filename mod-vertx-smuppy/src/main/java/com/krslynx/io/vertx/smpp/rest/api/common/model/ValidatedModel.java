@@ -72,7 +72,7 @@ public abstract class ValidatedModel {
         }
 
         if(field == null) {
-            this.addError(CRITICAL_MSG_NULL_FIELD + "name");
+            this.addError(CRITICAL_MSG_NULL_FIELD + fieldName);
             this.valid = false;
             return;
         }
@@ -89,4 +89,11 @@ public abstract class ValidatedModel {
         }
     }
 
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
 }
